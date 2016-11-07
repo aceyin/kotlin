@@ -1,0 +1,26 @@
+# sql配置文件
+abc.def.ghi:
+  insert: "insert into user (id,name) values (:id,:name)"
+  updateById: update user set name=:name where id=:id
+---
+some.sql.not.applied.on.entity: "select x "
+multiple.line.sql: >
+                      select x
+                      from y
+                      where z
+                      group by a
+                      order by a
+                      limit 0,1
+---
+report.sqls:
+  sql.1: "select count * from x"
+  sql.2: "select 1 from x"
+---
+multile.level.sql:
+  level1:
+    sql1: "select a from b"
+    sql2: "select c from d"
+  level2:
+    level3:
+      level4:
+        sql4: "select 4 from 5"
