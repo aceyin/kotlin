@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>aceyin.kotlin</groupId>
+        <groupId>kotun</groupId>
         <artifactId>parent</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../parent</relativePath>
     </parent>
 
-    <groupId>aceyin.kotlin.kotauth</groupId>
+    <groupId>kotun.kotauth</groupId>
     <artifactId>oauth2</artifactId>
     <version>1.0-SNAPSHOT</version>
 
