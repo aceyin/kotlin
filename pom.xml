@@ -10,10 +10,11 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>support</module>
         <module>parent</module>
         <module>kotdata</module>
         <module>kotweb</module>
+        <module>kotauth</module>
     </modules>
-
 
 </project>
