@@ -1,3 +1,12 @@
+# Application base information
+application:
+  # application's id: 允许 字母，数字和下划线组合
+  id: "DemoApplication"
+  # application's name: 允许Unicode
+  name: "Demo Application"
+  # 本 WEB 应用的基础URL(包含 contextPath 部分)
+  baseUrl: "http://localhost:8080/"
+---
 # spring config
 spring:
   # Spring的自动扫描包
@@ -6,6 +15,15 @@ spring:
   configurationClasses: []
   # Spring dispatcher servlet's url pattern
   dispatcherServletUrlPattern: "/*"
+---
+# i18n 配置
+i18n:
+  # 是否打开多语言支持
+  enabled: true
+  # 多语言配置文件的相对路径和 base name
+  basename: "/conf/i18n/messages"
+  # 在多语言环境下，默认的地区
+  defaultLocale: "en"
 ---
 # 数据源配置,支持多个数据源
 datasource:

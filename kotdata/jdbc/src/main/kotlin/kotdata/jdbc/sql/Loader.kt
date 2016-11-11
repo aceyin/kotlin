@@ -26,7 +26,7 @@ internal object Loader {
             LOGGER.warn("No SQL file found in specified path '$path'.")
             return
         }
-
+        LOGGER.info("Loading SQLs from '${file.absolutePath}'")
         val iterator = Yaml().loadAll(stream)
         iterator.forEach { item ->
             if (item is HashMap<*, *>) {

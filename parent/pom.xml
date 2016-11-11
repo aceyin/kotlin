@@ -22,6 +22,7 @@
         <logback.version>1.1.7</logback.version>
         <servlet.version>3.1.0</servlet.version>
         <log4j.version>2.7</log4j.version>
+        <swagger.version>1.0.2</swagger.version>
 
         <maven.compiler.target.version>1.8</maven.compiler.target.version>
         <maven.compiler.source.version>1.8</maven.compiler.source.version>
@@ -236,6 +237,29 @@
                 <artifactId>jackson-dataformat-yaml</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- swagger -->
+            <dependency>
+                <groupId>com.mangofactory</groupId>
+                <artifactId>swagger-springmvc</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mangofactory</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wordnik</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>1.3.13</version>
+            </dependency>
+
             <!-- test -->
             <dependency>
                 <groupId>com.h2database</groupId>

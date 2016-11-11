@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.web.WebApplicationInitializer
 import org.springframework.web.context.ContextLoaderListener
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+import org.springframework.web.filter.CharacterEncodingFilter
 import org.springframework.web.servlet.DispatcherServlet
 import javax.servlet.ServletContext
 
@@ -20,34 +21,57 @@ import javax.servlet.ServletContext
  */
 class Bootstrap : WebApplicationInitializer {
     private val KEY_CONF_DIR = "conf.dir"
+    private val dispatcherServletName = "dispatcher"
+    private val defaultUrlPattern = "/*"
     private val LOGGER = LoggerFactory.getLogger(Bootstrap::class.java)
     private var moduleInitializer = mutableSetOf<Class<*>>()
 
     override fun onStartup(context: ServletContext) {
-        // read configurations
-        val map = ConfigLoader.load(System.getProperty(KEY_CONF_DIR))
-        Config.PROPS.putAll(map)
+        // load application.yml config
+        this.loadApplicationConfig()
+        // init log4j
+        this.initLog4j(context)
+        // create and init spring context
+        val ctx = createSpringContext()
+        // TODO: support customized listener
+        // init dispatcher servlet
+        this.initServletContainer(context, ctx)
+        // enable filters
+        this.addFilters(context, ctx)
+        // enable swagger
+        this.enableSwagger(context, ctx)
+    }
 
+    private fun enableSwagger(context: ServletContext, ctx: AnnotationConfigWebApplicationContext) {
+        ctx.register(RestApiDocumentConfig::class.java)
+    }
+
+    /**
+     * 增加指定的filter
+     */
+    private fun addFilters(context: ServletContext, ctx: AnnotationConfigWebApplicationContext) {
+        val encodingFilter = context.addFilter("encodingFilter", CharacterEncodingFilter("UTF-8", true, true))
+        val urlPattern = Config.str("spring.dispatcherServletUrlPattern") ?: defaultUrlPattern
+        encodingFilter.addMappingForUrlPatterns(null, true, urlPattern)
+    }
+
+    private fun initLog4j(context: ServletContext) {
         //Log4jConfigListener
         context.setInitParameter("log4jConfigLocation", "classpath:conf/log4j.properties")
         context.addListener(Log4jServletContextListener::class.java)
+    }
 
-        // create and init spring context
-        val ctx = createSpringContext()
-
-        // TODO: support listener
-        // TODO: support filter
-
-        // init dispatcher servlet
-        this.initServletContainer(context, ctx)
+    private fun loadApplicationConfig() {
+        // read configurations
+        val map = ConfigLoader.load(System.getProperty(KEY_CONF_DIR))
+        Config.PROPS.putAll(map)
     }
 
     private fun initServletContainer(context: ServletContext, ctx: AnnotationConfigWebApplicationContext) {
-        ctx.servletContext = context
         context.addListener(ContextLoaderListener(ctx))
-        val dispatcher = context.addServlet("dispatcher", DispatcherServlet(ctx))
+        val dispatcher = context.addServlet(dispatcherServletName, DispatcherServlet(ctx))
         dispatcher.setLoadOnStartup(1)
-        val url = Config.str("spring.dispatcherServletUrlPattern") ?: "/"
+        val url = Config.str("spring.dispatcherServletUrlPattern") ?: defaultUrlPattern
         dispatcher.addMapping(url)
     }
 
