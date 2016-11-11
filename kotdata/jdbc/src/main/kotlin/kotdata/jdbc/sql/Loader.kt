@@ -7,11 +7,6 @@ import java.io.File
 import java.util.*
 
 /**
- * Created by ace on 2016/11/6.
- */
-
-
-/**
  * SQL Config loader
  */
 internal object Loader {
