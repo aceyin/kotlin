@@ -1,14 +1,15 @@
 package kotweb.rest
 
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 
 @Configuration
 @EnableWebMvc
-open class SpringConfig : WebMvcConfigurerAdapter()
+@ComponentScan(basePackages = arrayOf("kotun"))
+open class SpringConfig //: WebMvcConfigurerAdapter()
 
 /**
  * 让Application支持申明式事务支持。

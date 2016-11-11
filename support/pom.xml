@@ -13,7 +13,6 @@
 
     <artifactId>support</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
 
     <description>
         模块化支持的一些类。主要定义一些各个模块初始化需要的接口。

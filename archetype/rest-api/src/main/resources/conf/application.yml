@@ -1,17 +1,11 @@
 # spring config
 spring:
   # Spring的自动扫描包
-  packageScan: ['komics']
+  packageScan: ['kotun']
   # 如果要扩展spring的配置, 通过这里指定配置类
   configurationClasses: []
-  dispatcherServletMapping: "/"
----
-# logging
-logging:
-  # log4j 配置文件
-  log4j.properties: ""
-  # 是否打开 http debug 日志
-  http.logging: true
+  # Spring dispatcher servlet's url pattern
+  dispatcherServletUrlPattern: "/*"
 ---
 # 数据源配置,支持多个数据源
 datasource:

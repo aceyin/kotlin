@@ -1,6 +1,6 @@
 package kotun.support
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
+import org.springframework.context.ApplicationContext
 
 /**
  * 模块生命周期管理类。
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 interface ModuleLifecycle {
 
-    fun onInit(context: AnnotationConfigApplicationContext)
+    fun onInit(context: ApplicationContext)
 
-    fun onDestroy(context: AnnotationConfigApplicationContext)
+    fun onDestroy(context: ApplicationContext)
 }

@@ -3,8 +3,11 @@ package kotweb.rest
 import kotun.support.Config
 import kotun.support.ConfigLoader
 import kotun.support.ModuleLifecycle
+import kotweb.rest.initializer.DatasourceInitializer
+import org.apache.logging.log4j.web.Log4jServletContextListener
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationContext
 import org.springframework.web.WebApplicationInitializer
 import org.springframework.web.context.ContextLoaderListener
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext
@@ -25,18 +28,26 @@ class Bootstrap : WebApplicationInitializer {
         val map = ConfigLoader.load(System.getProperty(KEY_CONF_DIR))
         Config.PROPS.putAll(map)
 
+        //Log4jConfigListener
+        context.setInitParameter("log4jConfigLocation", "classpath:conf/log4j.properties")
+        context.addListener(Log4jServletContextListener::class.java)
+
         // create and init spring context
         val ctx = createSpringContext()
-        context.addListener(ContextLoaderListener(ctx))
+
+        // TODO: support listener
+        // TODO: support filter
 
         // init dispatcher servlet
-        this.initDispatcherServlet(context, ctx)
+        this.initServletContainer(context, ctx)
     }
 
-    private fun initDispatcherServlet(context: ServletContext, ctx: AnnotationConfigWebApplicationContext) {
+    private fun initServletContainer(context: ServletContext, ctx: AnnotationConfigWebApplicationContext) {
+        ctx.servletContext = context
+        context.addListener(ContextLoaderListener(ctx))
         val dispatcher = context.addServlet("dispatcher", DispatcherServlet(ctx))
         dispatcher.setLoadOnStartup(1)
-        val url = Config.str("spring.dispatcherServletMapping") ?: "/"
+        val url = Config.str("spring.dispatcherServletUrlPattern") ?: "/"
         dispatcher.addMapping(url)
     }
 
@@ -46,17 +57,32 @@ class Bootstrap : WebApplicationInitializer {
         // set scan
         val pkg = Config.strs("spring.packageScan")
         if (pkg.isNotEmpty()) ctx.scan(*pkg.toTypedArray())
-        // register config class
-        ctx.register(SpringConfig::class.java)
+        // register the java config into spring context
+        this.registerConfig(ctx)
         // initial datasource
         this.autoInitDataSource(ctx)
         // init other modules
-        this.initDependedModules()
+        this.initDependedModules(ctx)
 
         return ctx
     }
 
-    private fun initDependedModules() {
+    private fun registerConfig(ctx: AnnotationConfigWebApplicationContext) {
+        // register config class
+        ctx.register(SpringConfig::class.java)
+        // register the config defined in application.yml
+        val confs = Config.strs("spring.configurationClasses")
+        confs.forEach {
+            try {
+                val clazz = Class.forName(it)
+                ctx.register(clazz)
+            } catch (e: Exception) {
+                LOGGER.warn("Error while register config class '$it' defined in application.yml", e)
+            }
+        }
+    }
+
+    private fun initDependedModules(ctx: AnnotationConfigWebApplicationContext) {
         Reflections().getSubTypesOf(ModuleLifecycle::class.java)?.forEach {
             this.moduleInitializer.add(it)
         }
@@ -64,11 +90,11 @@ class Bootstrap : WebApplicationInitializer {
         this.moduleInitializer.forEach { clazz ->
             try {
                 val listener = clazz.newInstance()
-                val method = clazz.getDeclaredMethod("initialize")
-                method.invoke(listener)
+                val method = clazz.getDeclaredMethod("onInit", ApplicationContext::class.java)
+                method.invoke(listener, ctx)
                 LOGGER.info("Calling initialize of '${clazz.name}'")
             } catch (e: Exception) {
-                LOGGER.info("Error while calling module initializer: '${clazz.name}'.")
+                LOGGER.error("Error while calling module initializer: '${clazz.name}'.")
                 throw e
             }
         }
@@ -78,11 +104,11 @@ class Bootstrap : WebApplicationInitializer {
             this.moduleInitializer.forEach { clazz ->
                 try {
                     val listener = clazz.newInstance()
-                    val method = clazz.getDeclaredMethod("destroy")
-                    method.invoke(listener)
+                    val method = clazz.getDeclaredMethod("onDestroy", ApplicationContext::class.java)
+                    method.invoke(listener, ctx)
                     LOGGER.info("Calling destroy of '${clazz.name}'")
                 } catch (e: Exception) {
-                    LOGGER.info("Error while destroy module: '${clazz.name}'.")
+                    LOGGER.error("Error while destroy module: '${clazz.name}'.")
                     throw e
                 }
             }

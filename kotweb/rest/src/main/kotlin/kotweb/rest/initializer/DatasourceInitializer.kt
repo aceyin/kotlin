@@ -1,4 +1,4 @@
-package kotweb.rest
+package kotweb.rest.initializer
 
 import kotun.support.Config
 import org.apache.commons.beanutils.BeanUtils
@@ -21,7 +21,7 @@ internal class DatasourceInitializer : BeanDefinitionRegistryPostProcessor {
     private val datasourceBeans = mutableMapOf<String, Map<*, *>>()
     private val jdbcTemplateClassName = "org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate"
     private val transactionManagerClassName = "org.springframework.jdbc.datasource.DataSourceTransactionManager"
-    private val dbClassName = "komics.data.jdbc.Db"
+    private val dbClassName = "kotdata.jdbc.Db"
     private val jdbcTemplateBeanNameSuffix = "JdbcTemplate"
     private val transactionManagerBeanNameSuffix = "TransManager"
     private val dbBeanNameSuffix = "DB"

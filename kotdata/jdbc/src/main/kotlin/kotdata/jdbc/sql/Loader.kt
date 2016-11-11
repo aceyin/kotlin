@@ -17,6 +17,7 @@ internal object Loader {
      */
     internal fun load(path: String) {
         val file = File(path.trim())
+
         val stream =
                 if (file.exists() && file.isFile && file.canRead()) file.inputStream()
                 else ClassPathResource(path, Loader::class.java.classLoader).file?.inputStream()
