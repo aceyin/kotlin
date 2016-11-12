@@ -109,22 +109,22 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.4.5</version>
         </dependency>
 
-        <!-- swagger -->
+        <!-- swagger should only enable swagger under dev profile-->
         <dependency>
-            <groupId>com.mangofactory</groupId>
-            <artifactId>swagger-springmvc</artifactId>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.mangofactory</groupId>
-            <artifactId>swagger-models</artifactId>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.wordnik</groupId>
-            <artifactId>swagger-annotations</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -154,6 +154,10 @@
                                 <systemProperty>
                                     <name>conf.dir</name>
                                     <value>${project.basedir}/src/main/resources/conf</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <name>swagger.enabled</name>
+                                    <value>false</value>
                                 </systemProperty>
                             </systemProperties>
                         </configuration>

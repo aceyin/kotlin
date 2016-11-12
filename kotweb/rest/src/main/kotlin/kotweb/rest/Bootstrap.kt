@@ -38,12 +38,15 @@ class Bootstrap : WebApplicationInitializer {
         this.initServletContainer(context, ctx)
         // enable filters
         this.addFilters(context, ctx)
-        // enable swagger
-        this.enableSwagger(context, ctx)
+        // enable swagger for the dev environment
+        this.enableSwagger(ctx)
     }
 
-    private fun enableSwagger(context: ServletContext, ctx: AnnotationConfigWebApplicationContext) {
-        ctx.register(RestApiDocumentConfig::class.java)
+    private fun enableSwagger(ctx: AnnotationConfigWebApplicationContext) {
+        val enabled = System.getProperty("swagger.enabled", "false").toBoolean()
+        if (enabled) {
+            ctx.register(RestApiDocumentConfig::class.java)
+        }
     }
 
     /**

@@ -1,10 +1,6 @@
 package kotweb.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.mangofactory.swagger.configuration.SpringSwaggerConfig
-import com.mangofactory.swagger.models.dto.ApiInfo
-import com.mangofactory.swagger.plugin.EnableSwagger
-import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin
 import kotun.support.Config
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
@@ -16,9 +12,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.servlet.LocaleResolver
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.CookieLocaleResolver
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
+import springfox.documentation.swagger2.annotations.EnableSwagger2
 import java.util.*
 
 /**
@@ -84,33 +82,12 @@ open class SpringConfig : WebMvcConfigurerAdapter() {
  * 支持自动生成 Restful API 的文档
  */
 @Configuration
-@EnableSwagger
+@EnableSwagger2
 open class RestApiDocumentConfig : WebMvcConfigurerAdapter() {
 
-    @Bean
-    open fun springSwaggerConfig(): SpringSwaggerConfig {
-        return SpringSwaggerConfig()
-    }
-
-    /**
-     * Every SwaggerSpringMvcPlugin bean is picked up by the swagger-mvc
-     * framework - allowing for multiple swagger groups i.e. same code base
-     * multiple swagger resource listings.
-     */
-    @Bean
-    open fun customImplementation(): SwaggerSpringMvcPlugin {
-        return SwaggerSpringMvcPlugin(springSwaggerConfig()).apiInfo(apiInfo()).includePatterns(".*?")
-    }
-
-    private fun apiInfo(): ApiInfo {
-        val apiInfo = ApiInfo(
-                "API Title",
-                "API Description",
-                "API terms of service",
-                "API Contact Email",
-                "API Licence Type",
-                "API License URL")
-        return apiInfo
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/")
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/")
     }
 }
 
