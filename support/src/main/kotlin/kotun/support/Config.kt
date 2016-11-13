@@ -4,7 +4,7 @@ import java.util.*
 
 
 /**
- * The config of applicatioin
+ * The config of application
  */
 object Config {
 

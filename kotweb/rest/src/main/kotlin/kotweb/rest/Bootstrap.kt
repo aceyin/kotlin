@@ -3,8 +3,8 @@ package kotweb.rest
 import kotun.support.Config
 import kotun.support.ConfigLoader
 import kotun.support.ModuleLifecycle
+import kotun.support.StartupArguments
 import kotweb.rest.initializer.DatasourceInitializer
-import org.apache.logging.log4j.web.Log4jServletContextListener
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
@@ -20,20 +20,18 @@ import javax.servlet.ServletContext
  * This gets discovered no matter in what package this is hidden.
  */
 class Bootstrap : WebApplicationInitializer {
-    private val KEY_CONF_DIR = "conf.dir"
     private val dispatcherServletName = "dispatcher"
     private val defaultUrlPattern = "/*"
     private val LOGGER = LoggerFactory.getLogger(Bootstrap::class.java)
     private var moduleInitializer = mutableSetOf<Class<*>>()
 
     override fun onStartup(context: ServletContext) {
+        this.checkApplicationProperties()
         // load application.yml config
         this.loadApplicationConfig()
         // init log4j
-        this.initLog4j(context)
         // create and init spring context
         val ctx = createSpringContext()
-        // TODO: support customized listener
         // init dispatcher servlet
         this.initServletContainer(context, ctx)
         // enable filters
@@ -42,15 +40,24 @@ class Bootstrap : WebApplicationInitializer {
         this.enableSwagger(ctx)
     }
 
+    /**
+     * Check if the application's properties are set
+     */
+    private fun checkApplicationProperties() {
+
+    }
+
     private fun enableSwagger(ctx: AnnotationConfigWebApplicationContext) {
-        val enabled = System.getProperty("swagger.enabled", "false").toBoolean()
+        val enabled = System.getProperty(StartupArguments.SwaggerEnabled.key, "false").toBoolean()
         if (enabled) {
             ctx.register(RestApiDocumentConfig::class.java)
         }
     }
 
     /**
-     * 增加指定的filter
+     * 增加指定的 Filter.
+     * 注：自定义的filter也可以通过 servlet 3 的规范，在 web-fragment.xml 里面定义
+     * TODO: 支持自定义的filter
      */
     private fun addFilters(context: ServletContext, ctx: AnnotationConfigWebApplicationContext) {
         val encodingFilter = context.addFilter("encodingFilter", CharacterEncodingFilter("UTF-8", true, true))
@@ -58,15 +65,9 @@ class Bootstrap : WebApplicationInitializer {
         encodingFilter.addMappingForUrlPatterns(null, true, urlPattern)
     }
 
-    private fun initLog4j(context: ServletContext) {
-        //Log4jConfigListener
-        context.setInitParameter("log4jConfigLocation", "classpath:conf/log4j.properties")
-        context.addListener(Log4jServletContextListener::class.java)
-    }
-
     private fun loadApplicationConfig() {
         // read configurations
-        val map = ConfigLoader.load(System.getProperty(KEY_CONF_DIR))
+        val map = ConfigLoader.load(System.getProperty(StartupArguments.ConfDir.key))
         Config.PROPS.putAll(map)
     }
 
@@ -94,6 +95,9 @@ class Bootstrap : WebApplicationInitializer {
         return ctx
     }
 
+    /**
+     * Register the spring java config class specified in application.yml into spring context
+     */
     private fun registerConfig(ctx: AnnotationConfigWebApplicationContext) {
         // register config class
         ctx.register(SpringConfig::class.java)
@@ -109,6 +113,9 @@ class Bootstrap : WebApplicationInitializer {
         }
     }
 
+    /**
+     * init the customized module lifecycle class
+     */
     private fun initDependedModules(ctx: AnnotationConfigWebApplicationContext) {
         Reflections().getSubTypesOf(ModuleLifecycle::class.java)?.forEach {
             this.moduleInitializer.add(it)
@@ -142,6 +149,9 @@ class Bootstrap : WebApplicationInitializer {
         })
     }
 
+    /**
+     * automatic init the database support if "datasource" was configed in the application.yml
+     */
     private fun autoInitDataSource(context: AnnotationConfigWebApplicationContext) {
         val datasourceConf = Config.list("datasource")
         if (datasourceConf.isNotEmpty()) {

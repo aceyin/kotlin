@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType
  */
 
 @Controller
-class Hello {
+class Login {
     @ResponseBody
     @GetMapping(value = "/hello", produces = arrayOf(MediaType.APPLICATION_JSON))
     @ApiOperation(value = "根据用户名获取用户对象", httpMethod = "GET", response = String::class, notes = "根据用户名获取用户对象")
