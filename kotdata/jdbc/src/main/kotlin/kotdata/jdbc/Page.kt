@@ -1,12 +1,6 @@
 package kotdata.jdbc
 
-import kotdata.Entity
-
-/**
- * Created by ace on 2016/10/14.
- */
-
-data class Page<out E : Entity>(
+data class Page<out E>(
         /** 数据库表中的数据总量 */
         val rowNum: Int = 0,
         /** 按照当前页大小计算出的总页数 */
@@ -16,6 +10,6 @@ data class Page<out E : Entity>(
         /** 当前页的数据 */
         val pageData: List<E>) {
     companion object {
-        fun <E : Entity> empty() = Page<E>(0, 0, 0, emptyList())
+        fun <E> empty(): Page<E> = Page(0, 0, 0, emptyList())
     }
 }

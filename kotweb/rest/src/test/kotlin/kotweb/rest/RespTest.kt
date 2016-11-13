@@ -4,10 +4,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.Test
 import kotlin.test.assertEquals
 
-/**
- * Created by ace on 2016/11/13.
- */
-
 class RespTest {
 
     val MAPPER = jacksonObjectMapper()

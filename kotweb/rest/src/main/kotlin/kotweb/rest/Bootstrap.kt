@@ -1,12 +1,12 @@
 package kotweb.rest
 
+import kotun.support.ModuleLifecycle
 import kotun.support.cfg.Config
 import kotun.support.cfg.ConfigLoader
-import kotun.support.ModuleLifecycle
 import kotun.support.cons.StartupArguments
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
 import org.springframework.context.ApplicationContext
 import org.springframework.web.WebApplicationInitializer
 import org.springframework.web.context.ContextLoaderListener
@@ -22,6 +22,7 @@ import javax.servlet.ServletContext
 class Bootstrap : WebApplicationInitializer {
     private val dispatcherServletName = "dispatcher"
     private val datasourceInitializerClass = "kotdata.jdbc.initializer.DatasourceInitializer"
+    private val springPostProcessorName = "org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor"
     private val defaultUrlPattern = "/*"
     private val LOGGER = LoggerFactory.getLogger(Bootstrap::class.java)
     private var moduleInitializer = mutableSetOf<Class<*>>()
@@ -159,12 +160,14 @@ class Bootstrap : WebApplicationInitializer {
             // 如果发现配置文件中有datasource相关的配置，则初始化datasource和jdbc template
             try {
                 val clazz = Class.forName(datasourceInitializerClass)
-                if (clazz is BeanFactoryPostProcessor) {
-                    context.addBeanFactoryPostProcessor(clazz)
+                val size = clazz.interfaces?.filter { it.typeName == springPostProcessorName }?.size ?: 0
+                if (size > 0) {
+                    val bean = clazz.newInstance()
+                    context.addBeanFactoryPostProcessor(bean as BeanDefinitionRegistryPostProcessor)
                     // 添加申明式事务配置类
                     context.register(DeclarativeTransactionConfig::class.java)
                 } else {
-                    LOGGER.warn("Cannot automatic initialize database related support, since '$datasourceInitializerClass' is not a BeanFactoryPostProcessor")
+                    LOGGER.warn("Cannot automatic initialize database related support, since '$datasourceInitializerClass' is not a BeanDefinitionRegistryPostProcessor")
                 }
             } catch (e: Exception) {
                 LOGGER.warn("Cannot automatic initialize database related support, since '$datasourceInitializerClass' is not found", e)

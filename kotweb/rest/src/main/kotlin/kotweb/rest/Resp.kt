@@ -20,7 +20,9 @@ class Resp private constructor(val head: Head) {
         /**
          * 用指定的data创建response对象。
          */
-        fun succ(data: Any?): Resp = Resp(Head.success, data)
+        fun succ(message: String, data: Any? = null): Resp = Resp(Head.succ(message), data)
+
+        fun succ(data: Any): Resp = Resp(Head.success, data)
 
         /**
          * 创建一个代表失败的 response。
@@ -30,7 +32,9 @@ class Resp private constructor(val head: Head) {
         /**
          * 用指定的data创建一个response对象
          */
-        fun fail(data: Any?): Resp = Resp(Head.fail, data)
+        fun fail(message: String, data: Any? = null): Resp = Resp(Head.fail(message), data)
+
+        fun fail(data: Any): Resp = Resp(Head.fail, data)
     }
 }
 

@@ -3,6 +3,7 @@ package kotun.archetype.web
 import io.swagger.annotations.ApiOperation
 import kotun.archetype.entity.User
 import kotun.archetype.service.UserService
+import kotweb.rest.Resp
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -28,10 +29,10 @@ class UserApi {
             consumes = arrayOf(MediaType.APPLICATION_JSON),
             produces = arrayOf(MediaType.APPLICATION_JSON))
     @ApiOperation(value = "用户注册", httpMethod = "POST", response = String::class, notes = "用户注册")
-    fun register(@RequestBody user: User): ResponseEntity<String> {
+    fun register(@RequestBody user: User): ResponseEntity<Resp> {
         log.info("Register user: $user")
-        val success = userSvc.register(user)
+        val resp = userSvc.register(user)
 
-        return if (success) ResponseEntity.ok("OK") else ResponseEntity.ok("FAILED")
+        return ResponseEntity.ok().header("User-Defined-Header", user.id).body(resp)
     }
 }
