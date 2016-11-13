@@ -1,1 +1,2 @@
 # sqls
+check.if.user.exists: select count(1) from user where username=:username

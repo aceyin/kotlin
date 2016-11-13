@@ -1,7 +1,7 @@
 package kotweb.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotun.support.Config
+import kotun.support.cfg.Config
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

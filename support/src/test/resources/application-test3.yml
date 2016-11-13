@@ -1,0 +1,23 @@
+spring:
+  packageScan: ['komics']
+  configurationClasses: []
+---
+datasource:
+  -
+    name: "default-datasource"
+    class: "com.alibaba.druid.pool.DruidDataSource"
+    url: "jdbc:mysql://localhost:3306/decor_new"
+    username: 'root'
+    password: 'Qwer!234'
+    minIdle: 5
+    initialSize: [10,20]
+    maxActive: 100.1
+    maxActives: [100.1,100.2]
+    inUse: false
+    inUses: [true,false]
+---
+ebean:
+  -
+    name: "ebean-server-default"
+    datasource: "default-datasource"
+    default: "true"

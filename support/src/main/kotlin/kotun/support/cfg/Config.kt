@@ -1,4 +1,4 @@
-package kotun.support
+package kotun.support.cfg
 
 import java.util.*
 

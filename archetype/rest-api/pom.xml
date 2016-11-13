@@ -151,6 +151,24 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+            <!-- config the maven jetty plugin -->
+
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.3.14.v20161028</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                    </webApp>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                    <scanTargets>
+                        <scanTarget>${project.build.outputDirectory}</scanTarget>
+                    </scanTargets>
+                    <reload>automatic</reload>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -191,6 +209,11 @@
                                         <contextPath>/</contextPath>
                                     </webApp>
                                     <scanIntervalSeconds>10</scanIntervalSeconds>
+                                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                                    <scanTargets>
+                                        <scanTarget>${project.build.outputDirectory}</scanTarget>
+                                    </scanTargets>
+                                    <reload>automatic</reload>
                                 </configuration>
                             </execution>
                         </executions>

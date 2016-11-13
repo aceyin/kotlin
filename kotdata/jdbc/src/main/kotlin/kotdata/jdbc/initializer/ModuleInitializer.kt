@@ -2,7 +2,7 @@ package kotdata.jdbc.initializer
 
 import kotdata.jdbc.sql.Loader
 import kotun.support.ModuleLifecycle
-import kotun.support.StartupArguments
+import kotun.support.cons.StartupArguments
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 

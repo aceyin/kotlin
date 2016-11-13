@@ -24,8 +24,11 @@
 
     </Appenders>
     <Loggers>
-        <Root level="info">
+        <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
+        <logger name="org.reflections" level="WARN">
+            <AppenderRef ref="Console"/>
+        </logger>
     </Loggers>
 </Configuration>

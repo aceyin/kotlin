@@ -29,9 +29,9 @@ datasource:
   -
     name: "default-datasource"
     class: "com.alibaba.druid.pool.DruidDataSource"
-    url: "jdbc:mysql://localhost:3306/decor_new"
+    url: "jdbc:mysql://localhost:32768/komics"
     username: 'root'
-    password: 'Qwer!234'
+    password: 'qwer1234'
     minIdle: 5
     initialSize: 10
     maxActive: 100

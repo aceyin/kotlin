@@ -1,4 +1,4 @@
-package kotun.support
+package kotun.support.cfg
 
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
@@ -19,7 +19,7 @@ object ConfigLoader {
      * @param dir 配置文件所在的目录
      */
     fun load(dir: String?): Map<String, Any> {
-        val path = "${dir?.trim()}/$conf_file"
+        val path = "${dir?.trim()}/${conf_file}"
         val file = File(path)
 
         val stream = if (file.exists() && file.isFile) file.inputStream()

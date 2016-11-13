@@ -1,6 +1,6 @@
-package kotweb.rest.initializer
+package kotdata.jdbc.initializer
 
-import kotun.support.Config
+import kotun.support.cfg.Config
 import org.apache.commons.beanutils.BeanUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanDefinition

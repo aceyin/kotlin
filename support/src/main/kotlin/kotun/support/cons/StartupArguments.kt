@@ -1,4 +1,4 @@
-package kotun.support
+package kotun.support.cons
 
 /**
  * Application's startup arguments
